@@ -11,22 +11,20 @@ import {
 
 //Firebase
 import {authentication} from './firebase-config';
-import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-
-//Navigation
-import {useNavigation} from '@react-navigation/native';
+import {createUserWithEmailAndPassword} from 'firebase/auth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
   //Log in User
-  const onPressLogin = () => {
-    signInWithEmailAndPassword(authentication, email, password)
+  const registerUser = () => {
+    createUserWithEmailAndPassword(authentication, email, password)
       .then(userCredential => {
         // Signed in
         const user = userCredential.user;
-        navigation.navigate('Chat', {});
       })
       .catch(error => {
         const errorCode = error.code;
@@ -37,36 +35,30 @@ const Login = () => {
     setEmail('');
   };
 
-  //Navigate to sign up page
-  const onPressSignUp = () => {
-    navigation.navigate('Registration', {});
-  };
-
   //Login with guess account
-  const automaticLogin = () => {
-    //create random user
-    signInWithEmailAndPassword(authentication, 'guest@buzz.com', 'buzz123')
-      .then(userCredential => {
-        // Signed in
-        const user = userCredential.user;
-        navigation.navigate('Chats', {});
-      })
-      .catch(error => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      });
-  };
+
   return (
     <SafeAreaView style={styles.page}>
-      <View style={styles.signUpWrapper}>
-        <TouchableOpacity onPress={() => onPressSignUp()}>
-          <Text style={styles.signupText}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.container}>
         <View style={styles.titleWrapper}>
-          <Text style={styles.loginTitle}>Buzz</Text>
+          <Text style={styles.loginTitle}>Register</Text>
           <Image style={styles.logo} source={require('../Assets/logo.png')} />
+        </View>
+        <View style={styles.inputNameContainer}>
+          <TextInput
+            style={[styles.textInputName, {marginRight: 20}]}
+            placeholder="First Name"
+            keyboardType="default"
+            onChangeText={text => setFirstName(text)}
+            value={firstName}
+          />
+          <TextInput
+            style={styles.textInputName}
+            placeholder="Last Name"
+            keyboardType="default"
+            onChangeText={text => setLastName(text)}
+            value={lastName}
+          />
         </View>
         <TextInput
           style={styles.textInput}
@@ -75,6 +67,7 @@ const Login = () => {
           onChangeText={text => setEmail(text)}
           value={email}
         />
+
         <TextInput
           style={[styles.textInput, {marginBottom: 50}]}
           placeholder="Password"
@@ -84,13 +77,8 @@ const Login = () => {
         />
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={() => onPressLogin()}>
-          <Text style={styles.loginButtonText}>Log In</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.automaticLogin, {marginTop: 12}]}
-          onPress={() => automaticLogin()}>
-          <Text style={styles.loginButtonText}>Automatic Login</Text>
+          onPress={() => registerUser()}>
+          <Text style={styles.loginButtonText}>Register</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -106,9 +94,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 200,
-    marginHorizontal: 20,
-    paddingVertical: 40,
+    marginTop: 240,
   },
   signUpWrapper: {
     marginLeft: 325,
@@ -118,6 +104,7 @@ const styles = StyleSheet.create({
   },
   titleWrapper: {
     flexDirection: 'row',
+    marginBottom: 10,
   },
 
   loginTitle: {
@@ -132,6 +119,18 @@ const styles = StyleSheet.create({
     width: 55,
     marginLeft: 10,
     marginBottom: 5,
+  },
+  inputNameContainer: {
+    flexDirection: 'row',
+  },
+  textInputName: {
+    width: 140,
+    height: 35,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: 'black',
+    marginBottom: 10,
+    padding: 4,
   },
   textInput: {
     width: 300,

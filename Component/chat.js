@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   messageInput: {
     height: 30,
     width: 290,
+    padding: 4,
     borderWidth: 1,
     borderRadius: 50,
     borderColor: 'black',
