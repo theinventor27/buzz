@@ -11,27 +11,47 @@ import {
 
 //Firebase
 import {db} from './firebase-config';
-import {collection, getDocs} from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  query,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+} from 'firebase/firestore';
 
 const Chat = () => {
   const [chatMessages, setChatMessages] = useState('');
+  const [sentMessage, setSentMessage] = useState('');
 
+  //Get all messages in firebase collection
   const querySnapshot = async () => {
-    const querySnapshot = await getDocs(collection(db, 'messages'));
-    const msg = [];
+    const q = query(collection(db, 'messages'));
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      const msg = [];
 
-    querySnapshot.forEach(doc => {
-      // doc.data() is never undefined for query doc snapshots
-      msg.push({
-        ...doc.data(),
-        id: doc.id,
-        user: doc.data()['user'],
-        text: doc.data()['text'],
+      querySnapshot.forEach(doc => {
+        msg.push({
+          ...doc.data(),
+          id: doc.id,
+          user: doc.data()['user'],
+          text: doc.data()['text'],
+        });
+        console.log(msg);
       });
-      console.log(msg);
-    });
 
-    setChatMessages(msg);
+      setChatMessages(msg);
+    });
+  };
+
+  //Send Message
+  const sendMessage = async () => {
+    await addDoc(collection(db, 'messages'), {
+      text: sentMessage,
+      timestamp: serverTimestamp(),
+    });
+    setSentMessage('');
   };
 
   const MessageItem = ({text, id, user}) => {
@@ -63,8 +83,14 @@ const Chat = () => {
       </View>
       <View />
       <View style={styles.footer}>
-        <TextInput style={styles.messageInput} />
-        <TouchableOpacity style={styles.sendButton}>
+        <TextInput
+          style={styles.messageInput}
+          onChangeText={text => setSentMessage(text)}
+          value={sentMessage}
+        />
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={() => sendMessage()}>
           <Text style={styles.buttonText}>Send</Text>
         </TouchableOpacity>
       </View>
@@ -110,18 +136,20 @@ const styles = StyleSheet.create({
 
   //text
   myTextBackground: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     alignSelf: 'flex-end',
+
     borderRadius: 8,
-    marginLeft: 8,
+    marginRight: 8,
     backgroundColor: '#f0c929',
   },
   myText: {
-    flex: -1,
-    paddingHorizontal: 6,
-    maxWidth: 280,
-    minHeight: 25,
     flexWrap: 'wrap-reverse',
+    minWidth: 25,
+    maxWidth: 280,
+    paddingHorizontal: 5,
+    marginRight: 2,
+    paddingVertical: 5,
   },
   itemSeparatorComponent: {
     padding: 14,
