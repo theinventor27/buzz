@@ -2,9 +2,12 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Chats from './Component/ChatList';
+
+//Screens
+import ChatList from './Component/ChatList';
 import Login from './Component/Login';
 import Register from './Component/Register';
+import Chat from './Component/Chat';
 const App = () => {
   const Stack = createNativeStackNavigator();
 
@@ -18,13 +21,18 @@ const App = () => {
         />
 
         <Stack.Screen
-          name="Chats"
-          component={Chats}
+          name="Registration"
+          component={Register}
           options={{headerShown: false}}
         />
         <Stack.Screen
-          name="Registration"
-          component={Register}
+          name="ChatList"
+          component={ChatList}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Chat"
+          component={Chat}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

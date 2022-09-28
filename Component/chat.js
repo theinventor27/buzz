@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,13 +6,61 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 
+//Firebase
+import {db} from './firebase-config';
+import {collection, getDocs} from 'firebase/firestore';
+
 const Chat = () => {
+  const [chatMessages, setChatMessages] = useState('');
+
+  const querySnapshot = async () => {
+    const querySnapshot = await getDocs(collection(db, 'messages'));
+    const msg = [];
+
+    querySnapshot.forEach(doc => {
+      // doc.data() is never undefined for query doc snapshots
+      msg.push({
+        ...doc.data(),
+        id: doc.id,
+        user: doc.data()['user'],
+        text: doc.data()['text'],
+      });
+      console.log(msg);
+    });
+
+    setChatMessages(msg);
+  };
+
+  const MessageItem = ({text, id, user}) => {
+    <>
+      <SafeAreaView>
+        <Text>Message: {text}</Text>
+      </SafeAreaView>
+    </>;
+  };
+
+  useEffect(() => {
+    querySnapshot();
+  }, []);
   return (
     <SafeAreaView style={styles.container}>
-      <View styles={styles.contentContainer} />
-      <Text>Test</Text>
+      <View styles={styles.contentContainer}>
+        <FlatList
+          data={chatMessages}
+          style={{flexDirection: 'row-reverse'}}
+          ItemSeparatorComponent={
+            <View style={styles.itemSeparatorComponent} />
+          }
+          renderItem={({item}) => (
+            <View style={styles.myTextBackground}>
+              <Text style={styles.myText}> {item.text}</Text>
+            </View>
+          )}
+        />
+      </View>
       <View />
       <View style={styles.footer}>
         <TextInput style={styles.messageInput} />
@@ -49,7 +97,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   sendButton: {
-    backgroundColor: 'lightblue',
+    backgroundColor: '#f0c929',
     width: 65,
     height: 30,
     marginLeft: 10,
@@ -58,6 +106,25 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign: 'center',
+  },
+
+  //text
+  myTextBackground: {
+    flexDirection: 'row-reverse',
+    alignSelf: 'flex-end',
+    borderRadius: 8,
+    marginLeft: 8,
+    backgroundColor: '#f0c929',
+  },
+  myText: {
+    flex: -1,
+    paddingHorizontal: 6,
+    maxWidth: 280,
+    minHeight: 25,
+    flexWrap: 'wrap-reverse',
+  },
+  itemSeparatorComponent: {
+    padding: 14,
   },
 });
 export default Chat;

@@ -11,7 +11,7 @@ import {
 
 //Firebase
 import {authentication} from './firebase-config';
-import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
+import {signInWithEmailAndPassword} from 'firebase/auth';
 
 //Navigation
 import {useNavigation} from '@react-navigation/native';
@@ -26,7 +26,7 @@ const Login = () => {
       .then(userCredential => {
         // Signed in
         const user = userCredential.user;
-        navigation.navigate('Chat', {});
+        navigation.navigate('ChatList', {});
       })
       .catch(error => {
         const errorCode = error.code;
@@ -49,7 +49,7 @@ const Login = () => {
       .then(userCredential => {
         // Signed in
         const user = userCredential.user;
-        navigation.navigate('Chats', {});
+        navigation.navigate('ChatList', {});
       })
       .catch(error => {
         const errorCode = error.code;

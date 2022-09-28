@@ -34,6 +34,7 @@ const styles = StyleSheet.create({
   messagesTitle: {
     fontSize: 22,
     marginLeft: 20,
+    paddingBottom: 15,
   },
   messagesFlatListWrapper: {},
 });
