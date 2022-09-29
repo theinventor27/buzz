@@ -15,23 +15,30 @@ import {
   collection,
   addDoc,
   query,
+  doc,
   limit,
   onSnapshot,
   serverTimestamp,
   orderBy,
+  Timestamp,
 } from 'firebase/firestore';
 
-const Chat = () => {
+const Chat = ({route}) => {
   const [chatMessages, setChatMessages] = useState('');
   const [sentMessage, setSentMessage] = useState('');
 
   //Get all messages in firebase collection
   const querySnapshot = async () => {
-    const q = query(
-      collection(db, 'messages'),
-      orderBy('timestamp'),
-      limit(50),
+    const chatRef = collection(
+      db,
+      'users',
+      'Guest@buzz.com',
+      'chats',
+      route.params.user,
+      'messages',
     );
+
+    const q = query(chatRef, orderBy('timestamp'), limit(50));
     const unsubscribe = onSnapshot(q, querySnapshot => {
       const msg = [];
 
@@ -51,7 +58,15 @@ const Chat = () => {
 
   //Send Message
   const sendMessage = async () => {
-    await addDoc(collection(db, 'messages'), {
+    const messageRef = collection(
+      db,
+      'users',
+      'Guest@buzz.com',
+      'chats',
+      route.params.user,
+      'messages',
+    );
+    await addDoc(messageRef, {
       text: sentMessage,
       timestamp: serverTimestamp(),
     });

@@ -7,6 +7,7 @@ import {db} from './firebase-config';
 import {
   collection,
   addDoc,
+  doc,
   query,
   limit,
   onSnapshot,
@@ -18,7 +19,9 @@ const ChatList = () => {
 
   //Get all messages in firebase collection
   const querySnapshot = async () => {
-    const q = query(collection(db, 'chats'), limit(50));
+    const chatRef = collection(db, 'users', 'Guest@buzz.com', 'chats');
+
+    const q = query(chatRef, limit(50));
     const unsubscribe = onSnapshot(q, querySnapshot => {
       const chats = [];
 

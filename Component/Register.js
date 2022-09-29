@@ -12,6 +12,8 @@ import {
 //Firebase
 import {authentication} from './firebase-config';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
+import {db} from './firebase-config';
+import {doc, setDoc, collection, getDoc, Timestamp} from 'firebase/firestore';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -20,7 +22,7 @@ const Login = () => {
   const [lastName, setLastName] = useState('');
 
   //Log in User
-  const registerUser = () => {
+  const registerUser = async () => {
     createUserWithEmailAndPassword(authentication, email, password)
       .then(userCredential => {
         // Signed in
@@ -30,7 +32,34 @@ const Login = () => {
         const errorCode = error.code;
         const errorMessage = error.message;
       });
+    // Add a new document in collection "users"
+    await setDoc(doc(db, 'users', email), {
+      user: email,
+      firstName: firstName,
+      lastName: lastName,
+    });
+    console.log(email);
+    // Add Buzz to chatlog
+    const chatRef = doc(db, 'users', email, 'chats', 'Buzz');
+    await setDoc(chatRef, {
+      user: 'Buzz',
+      avi: 'https://robohash.org/test',
+    });
 
+    // Add messages collection to Buzz
+    const messagesRef = doc(
+      db,
+      'users',
+      email,
+      'chats',
+      'Buzz',
+      'messages',
+      Timestamp,
+    );
+    await setDoc(messagesRef, {
+      text: 'Hey! Welcome to Buzz!',
+      Timestamp: Timestamp,
+    });
     setPassword('');
     setEmail('');
   };
