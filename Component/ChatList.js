@@ -1,21 +1,57 @@
 import {StyleSheet, Text, View, SafeAreaView, FlatList} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import DATA from './Data';
 import Messages from './Messages';
 
+import {db} from './firebase-config';
+import {
+  collection,
+  addDoc,
+  query,
+  limit,
+  onSnapshot,
+  serverTimestamp,
+  orderBy,
+} from 'firebase/firestore';
 const ChatList = () => {
+  const [chatList, setChatList] = useState('');
+
+  //Get all messages in firebase collection
+  const querySnapshot = async () => {
+    const q = query(collection(db, 'chats'), limit(50));
+    const unsubscribe = onSnapshot(q, querySnapshot => {
+      const chats = [];
+
+      querySnapshot.forEach(doc => {
+        chats.push({
+          ...doc.data(),
+          id: doc.id,
+          user: doc.data()['user'],
+          lastMessage: doc.data()['lastMessage'],
+          avi: doc.data()['avi'],
+        });
+        console.log(chats);
+      });
+
+      setChatList(chats);
+    });
+  };
+  useEffect(() => {
+    querySnapshot();
+  }, []);
+
   return (
     <SafeAreaView style={styles.screen}>
       <Text style={styles.messagesTitle}>Messages:</Text>
       <View style={styles.messagesFlatListWrapper}>
         <FlatList
-          data={DATA}
+          style={{flexGrow: 1}}
+          data={chatList}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
             <Messages
-              username={item.username}
+              user={item.user}
               lastMessage={item.lastMessage}
-              lastMessageTime={item.lastMessageTime}
               avi={item.avi}
             />
           )}
@@ -36,5 +72,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     paddingBottom: 15,
   },
-  messagesFlatListWrapper: {},
+  messagesFlatListWrapper: {
+    flex: 1,
+  },
 });

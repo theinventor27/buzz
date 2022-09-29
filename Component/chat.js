@@ -13,12 +13,12 @@ import {
 import {db} from './firebase-config';
 import {
   collection,
-  getDocs,
   addDoc,
   query,
-  doc,
+  limit,
   onSnapshot,
   serverTimestamp,
+  orderBy,
 } from 'firebase/firestore';
 
 const Chat = () => {
@@ -27,7 +27,11 @@ const Chat = () => {
 
   //Get all messages in firebase collection
   const querySnapshot = async () => {
-    const q = query(collection(db, 'messages'));
+    const q = query(
+      collection(db, 'messages'),
+      orderBy('timestamp'),
+      limit(50),
+    );
     const unsubscribe = onSnapshot(q, querySnapshot => {
       const msg = [];
 
@@ -69,8 +73,8 @@ const Chat = () => {
     <SafeAreaView style={styles.container}>
       <View styles={styles.contentContainer}>
         <FlatList
+          style={{flexGrow: 1}}
           data={chatMessages}
-          style={{flexDirection: 'row-reverse'}}
           ItemSeparatorComponent={
             <View style={styles.itemSeparatorComponent} />
           }
@@ -103,7 +107,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
-  contentContainer: {},
+  contentContainer: {
+    flex: 1,
+  },
   footer: {
     width: '100%',
     height: 60,

@@ -7,13 +7,13 @@ import {db} from './firebase-config';
 //Navigation
 import {useNavigation} from '@react-navigation/native';
 
-const Messages = ({name, username, lastMessage, avi}) => {
+const Messages = ({name, user, lastMessage, avi}) => {
   const navigation = useNavigation();
 
   const goToChat = () => {
     navigation.navigate('Chat', {
       avi: avi,
-      username: username,
+      user: user,
     });
   };
   return (
@@ -25,7 +25,7 @@ const Messages = ({name, username, lastMessage, avi}) => {
           <Image style={styles.avi} source={{uri: avi}} />
         </View>
         <View style={styles.messsageWrapper}>
-          <Text style={styles.name}>{username}</Text>
+          <Text style={styles.name}>{user}</Text>
           <Text style={styles.lastMessage}>{lastMessage}</Text>
         </View>
       </View>
