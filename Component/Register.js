@@ -47,7 +47,7 @@ const Login = () => {
     });
 
     // Add messages collection to Buzz
-    const messagesRef = doc(
+    const messagesRef = collection(
       db,
       'users',
       email,

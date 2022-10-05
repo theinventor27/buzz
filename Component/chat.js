@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Image,
 } from 'react-native';
 
 //Firebase
@@ -26,7 +27,6 @@ import {
 const Chat = ({route}) => {
   const [chatMessages, setChatMessages] = useState('');
   const [sentMessage, setSentMessage] = useState('');
-
   //Get all messages in firebase collection
   const querySnapshot = async () => {
     const chatRef = collection(
@@ -86,6 +86,10 @@ const Chat = ({route}) => {
   }, []);
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.headerWrapper}>
+        <Image style={styles.avi} source={{uri: route.params.avi}} />
+        <Text style={styles.username}>{route.params.user}</Text>
+      </View>
       <View styles={styles.contentContainer}>
         <FlatList
           style={{flexGrow: 1}}
@@ -121,6 +125,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5FCFF',
+  },
+  headerWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.6,
+    paddingBottom: 5,
+  },
+  avi: {
+    height: 40,
+    width: 40,
+  },
+  username: {
+    fontSize: 15,
   },
   contentContainer: {
     flex: 1,
@@ -173,7 +191,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   itemSeparatorComponent: {
-    padding: 14,
+    padding: 10,
   },
 });
 export default Chat;

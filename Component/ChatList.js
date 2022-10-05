@@ -13,6 +13,7 @@ import {
   onSnapshot,
   serverTimestamp,
   orderBy,
+  getDoc,
 } from 'firebase/firestore';
 const ChatList = () => {
   const [chatList, setChatList] = useState('');
@@ -20,8 +21,17 @@ const ChatList = () => {
   //Get all messages in firebase collection
   const querySnapshot = async () => {
     const chatRef = collection(db, 'users', 'Guest@buzz.com', 'chats');
+    const lastMessageRef = collection(
+      db,
+      'users',
+      'Guest@buzz.com',
+      'chats',
+      'Buzz',
+      'messages',
+    );
 
     const q = query(chatRef, limit(50));
+    const lastMessage = query(lastMessageRef, orderBy('timestamp'), limit(1));
     const unsubscribe = onSnapshot(q, querySnapshot => {
       const chats = [];
 
@@ -30,7 +40,7 @@ const ChatList = () => {
           ...doc.data(),
           id: doc.id,
           user: doc.data()['user'],
-          lastMessage: doc.data()['lastMessage'],
+          lastMessage: lastMessage['text'],
           avi: doc.data()['avi'],
         });
         console.log(chats);
