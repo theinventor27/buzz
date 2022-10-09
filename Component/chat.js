@@ -23,10 +23,14 @@ import {
   orderBy,
   Timestamp,
 } from 'firebase/firestore';
+//navigation
+import {useNavigation} from '@react-navigation/native';
 
 const Chat = ({route}) => {
   const [chatMessages, setChatMessages] = useState('');
   const [sentMessage, setSentMessage] = useState('');
+
+  const navigation = useNavigation();
   //Get all messages in firebase collection
   const querySnapshot = async () => {
     const chatRef = collection(
@@ -73,6 +77,9 @@ const Chat = ({route}) => {
     setSentMessage('');
   };
 
+  const goBack = () => {
+    navigation.navigate('ChatList', {});
+  };
   const MessageItem = ({text, id, user}) => {
     <>
       <SafeAreaView>
@@ -87,12 +94,17 @@ const Chat = ({route}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerWrapper}>
+        <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.nameWrapper}>
         <Image style={styles.avi} source={{uri: route.params.avi}} />
         <Text style={styles.username}>{route.params.user}</Text>
       </View>
       <View styles={styles.contentContainer}>
         <FlatList
-          style={{flexGrow: 1}}
+          style={{flexGrow: 1, paddingTop: 10}}
           data={chatMessages}
           ItemSeparatorComponent={
             <View style={styles.itemSeparatorComponent} />
@@ -126,13 +138,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
-  headerWrapper: {
+  nameWrapper: {
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     borderBottomColor: 'gray',
     borderBottomWidth: 0.6,
     paddingBottom: 5,
   },
+  backButton: {
+    marginLeft: 10,
+  },
+  backButtonText: {
+    textDecorationLine: 'underline',
+    fontWeight: '300',
+  },
+  headerWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
   avi: {
     height: 40,
     width: 40,
