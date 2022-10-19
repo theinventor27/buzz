@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
@@ -10,6 +10,7 @@ import Register from './Component/Register';
 import Chat from './Component/Chat';
 const App = () => {
   const Stack = createNativeStackNavigator();
+  const [myUsername, setMyUsername] = useState('');
 
   return (
     <NavigationContainer>

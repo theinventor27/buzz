@@ -19,6 +19,7 @@ import {useNavigation} from '@react-navigation/native';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [myUsername, setMyUsername] = useState('');
   const navigation = useNavigation();
   //Log in User
   const onPressLogin = () => {
@@ -44,17 +45,19 @@ const Login = () => {
 
   //Login with guess account
   const automaticLogin = () => {
+    setMyUsername('guest@buzz.com');
     //create random user
     signInWithEmailAndPassword(authentication, 'guest@buzz.com', 'buzz123')
       .then(userCredential => {
         // Signed in
         const user = userCredential.user;
-        navigation.navigate('ChatList', {});
+        navigation.navigate('ChatList', {myUsername: myUsername});
       })
       .catch(error => {
         const errorCode = error.code;
         const errorMessage = error.message;
       });
+    console.log(myUsername);
   };
   return (
     <SafeAreaView style={styles.page}>

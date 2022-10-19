@@ -7,13 +7,16 @@ import {db} from './firebase-config';
 //Navigation
 import {useNavigation} from '@react-navigation/native';
 
-const Messages = ({name, user, lastMessage, avi}) => {
+const Messages = ({name, user, lastMessage, avi, myUsername}) => {
   const navigation = useNavigation();
 
   const goToChat = () => {
+    console.log('test', myUsername);
+
     navigation.navigate('Chat', {
       avi: avi,
       user: user,
+      myUsername: myUsername,
     });
   };
   return (

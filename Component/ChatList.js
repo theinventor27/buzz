@@ -14,11 +14,12 @@ import {
   orderBy,
   updateDoc,
 } from 'firebase/firestore';
-const ChatList = () => {
+const ChatList = ({route}) => {
   const [chatList, setChatList] = useState('');
 
   //Get all chats in firebase collection
   const queryAllChats = async () => {
+    console.log('my username', route.params.myUsername);
     //Create refrence for chat collection
     const chatRef = collection(db, 'users', 'Guest@buzz.com', 'chats');
     //Query (get all documents from a collection) 50 messages from chat collection.
@@ -54,8 +55,6 @@ const ChatList = () => {
             placeholderLastMessage = doc.data()['text'];
             //Find this chat then set lastMessage field as most recent message
           });
-          console.log(doc.data()['user']);
-          console.log(placeholderLastMessage);
           setLastMessageField(doc.data()['user'], placeholderLastMessage);
         });
         chats.push({
@@ -93,6 +92,7 @@ const ChatList = () => {
               user={item.user}
               lastMessage={item.lastMessage}
               avi={item.avi}
+              myUsername={route.params.myUsername}
             />
           )}
         />

@@ -72,6 +72,7 @@ const Chat = ({route}) => {
     );
     await addDoc(messageRef, {
       text: sentMessage,
+      sender: route.params.myUsername,
       timestamp: serverTimestamp(),
     });
     setSentMessage('');
@@ -95,7 +96,7 @@ const Chat = ({route}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerWrapper}>
         <TouchableOpacity onPress={() => goBack()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>Back</Text>
+          <Text style={styles.backButtonText}>{'<'} Back</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.nameWrapper}>
@@ -109,11 +110,17 @@ const Chat = ({route}) => {
           ItemSeparatorComponent={
             <View style={styles.itemSeparatorComponent} />
           }
-          renderItem={({item}) => (
-            <View style={styles.myTextBackground}>
-              <Text style={styles.myText}> {item.text}</Text>
-            </View>
-          )}
+          renderItem={({item}) =>
+            item.sender === route.params.myUsername ? (
+              <View style={styles.myTextBackground}>
+                <Text style={styles.myText}> {item.text}</Text>
+              </View>
+            ) : (
+              <View style={styles.theirTextBackground}>
+                <Text style={styles.theirText}> {item.text}</Text>
+              </View>
+            )
+          }
         />
       </View>
       <View />
@@ -150,8 +157,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   backButtonText: {
-    textDecorationLine: 'underline',
-    fontWeight: '300',
+    fontWeight: '500',
   },
   headerWrapper: {
     flexDirection: 'row',
@@ -208,6 +214,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0c929',
   },
   myText: {
+    flexWrap: 'wrap-reverse',
+    minWidth: 25,
+    maxWidth: 280,
+    paddingHorizontal: 5,
+    marginRight: 2,
+    paddingVertical: 5,
+  },
+  theirTextBackground: {
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    borderRadius: 8,
+    marginLeft: 8,
+    backgroundColor: '#D3D3D3',
+  },
+  theirText: {
     flexWrap: 'wrap-reverse',
     minWidth: 25,
     maxWidth: 280,
